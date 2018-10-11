@@ -3,7 +3,7 @@ One text input field to handle it all: text, date, number and inlcudes custom er
 
 A custom view comprising an EditText encapsulated in TextInputLayout along with different attributes, so that you don't need to add properties and write functions separately
 
-# How to use
+## Usage
 
 Add it in your root build.gradle at the end of repositories:
 
@@ -20,7 +20,7 @@ Step 2. Add the dependency
 	}
 
 
-## Use XML
+### Use XML
 ```
 <com.bibaswann.mastertextinput.MasterTextInput
     android:id="@+id/inputName"
@@ -38,7 +38,7 @@ Step 2. Add the dependency
     app:custom_min_max_length_error="Input must be between 3 and 100 characters"
     app:custom_error="This input is not valid" />
 ```
-## In Kotlin File
+### In Kotlin File
 ```
 val masterTextInput: MasterTextInput = MasterTextInput(this)
 //isValid will automatically show specified error message in case of error
