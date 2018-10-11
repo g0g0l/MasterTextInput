@@ -20,7 +20,7 @@ Step 2. Add the dependency
 	}
 
 
-### Use XML
+### In XML
 ```
 <com.bibaswann.mastertextinput.MasterTextInput
     android:id="@+id/inputName"
