@@ -20,7 +20,7 @@ Step 2. Add the dependency
 	}
 
 
-# Use XML
+## Use XML
 ```
 <com.bibaswann.mastertextinput.MasterTextInput
     android:id="@+id/inputName"
@@ -31,7 +31,7 @@ Step 2. Add the dependency
     app:custom_input_type="@integer/floating_input_type_normal"
     app:custom_error="This input is not valid" />
 ```
-# In Kotlin File
+## In Kotlin File
 ```
 val masterTextInput: MasterTextInput = MasterTextInput(this)
 //isValid will automatically show specified error message in case of error
