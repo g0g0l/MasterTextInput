@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomEditText">
+        <attr name="custom_image" format="reference" />
+        <attr name="custom_text_color" format="color" />
+        <attr name="custom_hint_color" format="color" />
+        <attr name="custom_hint" format="string" localization="suggested" />
+        <attr name="custom_error" format="string" localization="suggested" />
+        <attr name="custom_min_max_error" format="string" localization="suggested" />
+        <attr name="custom_min_max_length_error" format="string" localization="suggested" />
+        <attr name="custom_input_type" format="integer" localization="suggested" />
+        <attr name="custom_input_min" format="integer" localization="suggested" />
+        <attr name="custom_input_max" format="integer" localization="suggested" />
+        <attr name="custom_input_min_length" format="integer" localization="suggested" />
+        <attr name="custom_input_max_length" format="integer" localization="suggested" />
+        <attr name="custom_editable" format="boolean" localization="suggested" />
+        <attr name="custom_text" format="string" localization="suggested" />
+    </declare-styleable>
+
+    <integer name="floating_input_type_email">1</integer>
+    <integer name="floating_input_type_normal">2</integer>
+    <integer name="floating_input_type_age">3</integer>
+    <integer name="floating_input_type_alphanumeric">4</integer>
+    <integer name="floating_input_type_number">5</integer>
+    <integer name="floating_input_type_date">6</integer>
+    <integer name="floating_input_type_date_time">7</integer>
+
+</resources>
