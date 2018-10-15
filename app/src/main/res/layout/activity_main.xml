@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:padding="@dimen/margin16">
 
     <com.bibaswann.mastertextinput.MasterTextInput
-        android:id="@+id/inputEndDate"
+        android:id="@+id/input1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/margin8"
-        app:custom_hint="Enter your mobile no"
-        app:custom_error="this is not valid"
-        app:custom_text_color="@color/colorPrimaryDark"
-        app:custom_hint_color="@color/colorPrimaryDark"
-        app:custom_input_type="@integer/floating_input_type_number"/>
+        app:custom_hint="Enter name"
+        app:custom_error="This input is not valid"
+        app:custom_input_type="@integer/floating_input_type_normal"
+        app:custom_single_line="true" />
 
-</android.support.constraint.ConstraintLayout>
+    <com.bibaswann.mastertextinput.MasterTextInput
+        android:id="@+id/input2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/margin8"
+        app:custom_hint="Enter date"
+        app:custom_error="This input is not valid"
+        app:custom_text_color="@color/colorAccent"
+        app:custom_hint_color="@color/colorPrimary"
+        app:custom_input_type="@integer/floating_input_type_date" />
+
+</LinearLayout>
