@@ -31,6 +31,7 @@ Step 2. Add the dependency
     app:custom_input_type="@integer/floating_input_type_normal"
     app:custom_text="John Doe"
     app:custom_editable="true"
+    app:custom_single_line="true"
     app:custom_hint_color="@color/colorPrimary"
     app:custom_text_color="@color/colorPrimaryDark"
     app:custom_input_max_length="100"
@@ -47,13 +48,16 @@ if (!masterTextInput.isValid)
 ```
 ### Available input types are
 ```
-floating_input_type_email
 floating_input_type_normal
+floating_input_type_email
+floating_input_type_password
 floating_input_type_age
 floating_input_type_alphanumeric
 floating_input_type_number
 floating_input_type_date
 floating_input_type_date_time
+floating_input_type_text_caps
+floating_input_type_phone
 ```
 ### Available properties/functions
 ```
