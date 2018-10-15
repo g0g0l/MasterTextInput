@@ -7,6 +7,7 @@ One text input field to handle it all: email, string, date, number and also inlc
 A custom view comprising an EditText encapsulated in TextInputLayout along with different attributes, so that you don't need to add properties and write functions separately
 
 ## Usage
+Step 1. Add the JitPack repository to your build file
 
 Add it in your root build.gradle at the end of repositories:
 
