@@ -65,14 +65,18 @@ floating_input_type_phone
 ```
 ### Available properties/functions
 ```
-isValid
-isMinMaxValid (Only for integer inputs)
-isMinMaxLengthValid
-text
+isValid(): Checks email/number and if input is empty
+isMinMaxValid(): Whether input is in given range (Only for integer inputs)
+isMinMaxLengthValid()
+text: get()/set()
 error: get()/set()
 showError()
 clearError()
-setHint()
+setHint(String)
+setTextWatcher(TextWatcher)
+setImageClickListener(View.OnClickListener): Only if you set custom_image via XML
+setSingleLine(Boolean)
+setEditable(Boolean)
 ```
 
 ### For complete list of properties, functions and input types, please check the source code
