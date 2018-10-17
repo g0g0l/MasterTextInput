@@ -20,7 +20,7 @@ Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.g0g0l:MasterTextInput:v1.1'
+	        implementation 'com.github.g0g0l:MasterTextInput:v1.2.1'
 	}
 
 
