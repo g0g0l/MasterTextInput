@@ -29,4 +29,10 @@
         app:custom_hint_color="@color/colorPrimary"
         app:custom_input_type="@integer/floating_input_type_date" />
 
+    <com.bibaswann.mastertextinput.MasterTextInput
+        android:id="@+id/input3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:custom_image="@android:drawable/ic_input_add" />
+
 </LinearLayout>

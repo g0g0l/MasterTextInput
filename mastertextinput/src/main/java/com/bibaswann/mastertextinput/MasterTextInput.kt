@@ -1,5 +1,6 @@
 package com.bibaswann.mastertextinput
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
@@ -13,9 +14,12 @@ import android.text.TextWatcher
 import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View.OnTouchListener
 import android.widget.EditText
 import android.widget.LinearLayout
 import java.util.*
+
 
 /**
 Created by bibaswann on 11/10/18.
@@ -47,8 +51,8 @@ class MasterTextInput : LinearLayout {
     var minLength: Int = 0
     var maxLength: Int = 0
 
-    var mIsEditable = true
-    var mIsSingleLine = false
+    private var mIsEditable = true
+    private var mIsSingleLine = false
 
     //Todo: When add more type add entry here
     var isValid: Boolean = false
@@ -250,12 +254,31 @@ class MasterTextInput : LinearLayout {
         etFloating.filters = arrayOf(InputFilter.LengthFilter(AGE_LENGTH))
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupDateTime(dateOnly: Boolean) {
+        etFloating.isEnabled = false
         etFloating.inputType = InputType.TYPE_NULL
-        etFloating.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus)
-                setdateTimeToEditText(etFloating, dateOnly)
-        }
+        etFloating.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.baseline_date_range_24, 0)
+        //Handling it wil focus change creates problem when multiple dateviews are one after another
+//        etFloating.setOnFocusChangeListener { _, hasFocus ->
+//            if (hasFocus)
+//                setdateTimeToEditText(etFloating, dateOnly)
+//        }
+
+        etFloating.setOnTouchListener(OnTouchListener { _, event ->
+            val DRAWABLE_LEFT = 0
+            val DRAWABLE_TOP = 1
+            val DRAWABLE_RIGHT = 2
+            val DRAWABLE_BOTTOM = 3
+
+            if (event.action == MotionEvent.ACTION_UP) {
+                if (event.rawX >= etFloating.right - etFloating.compoundDrawables[DRAWABLE_RIGHT].bounds.width()) {
+                    setdateTimeToEditText(etFloating, dateOnly)
+                    return@OnTouchListener true
+                }
+            }
+            false
+        })
     }
 
     private fun getMinMaxValidation(value: Int): Boolean {
@@ -340,6 +363,26 @@ class MasterTextInput : LinearLayout {
         etFloating.addTextChangedListener(textWatcher)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    fun setImageClickListener(onClickListener: OnClickListener) {
+        if (floatingImage != null) {
+            etFloating.setOnTouchListener(OnTouchListener { _, event ->
+                val DRAWABLE_LEFT = 0
+                val DRAWABLE_TOP = 1
+                val DRAWABLE_RIGHT = 2
+                val DRAWABLE_BOTTOM = 3
+
+                if (event.action == MotionEvent.ACTION_UP) {
+                    if (event.rawX >= etFloating.right - etFloating.compoundDrawables[DRAWABLE_RIGHT].bounds.width()) {
+                        onClickListener.onClick(etFloating)
+                        return@OnTouchListener true
+                    }
+                }
+                false
+            })
+        }
+    }
+
     fun clearError() {
         tilFloating.error = null
         tilFloating.isErrorEnabled = false
@@ -375,6 +418,8 @@ class MasterTextInput : LinearLayout {
             }
         }
 
+    //Todo will think about converting the following to properties
+
     fun setHint(hint: String) {
         mHint = if (Validate.isEmptyString(hint)) "" else hint
         tilFloating.hint = mHint
@@ -383,9 +428,8 @@ class MasterTextInput : LinearLayout {
     fun setEditable(editable: Boolean) {
         mIsEditable = editable
         etFloating.isEnabled = mIsEditable
-        //Todo probably we don't need to disable focus
-//        etFloating.isFocusable = mIsEditable
-//        etFloating.isFocusableInTouchMode = mIsEditable
+        etFloating.isFocusable = mIsEditable
+        etFloating.isFocusableInTouchMode = mIsEditable
     }
 
     fun setSingleLine(singleLine: Boolean) {
@@ -406,14 +450,9 @@ class MasterTextInput : LinearLayout {
             if (!dateOnly) {
                 val timePickerDialog = TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                     editText!!.setText(editText!!.text.toString() + " - " + String.format("%02d:%02d", hourOfDay, minute))
-                    //This will not work if this is the first view from top
-                    //When you clear a focus, the focus goes to first view from the top
-                    //And there is no solution for that, except, maybe using a button
-                    editText.clearFocus()
                 }, mHour, mMinute, true)
                 timePickerDialog.show()
-            } else
-                editText.clearFocus()
+            }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
         dialog.show()
     }
