@@ -20,7 +20,7 @@ Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.g0g0l:MasterTextInput:v1.2.1'
+	        implementation 'com.github.g0g0l:MasterTextInput:1.2.2'
 	}
 
 
@@ -41,7 +41,11 @@ Step 2. Add the dependency
     app:custom_input_max_length="100"
     app:custom_input_min_length="3"
     app:custom_min_max_length_error="Input must be between 3 and 100 characters"
-    app:custom_error="This input is not valid" />
+    app:custom_error="This input is not valid"
+    app:custom_background="@drawable/sample_box_design"
+    app:custom_image="@drawable/sample_image"
+    app:custom_border="true"
+    app:custom_text_size="14sp" />
 ```
 ### In Kotlin File
 ```
