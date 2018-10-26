@@ -1,6 +1,6 @@
 package com.bibaswann.mastertextinput
 
-import android.util.Log
+import android.content.Context
 import android.widget.EditText
 
 /**
@@ -28,5 +28,10 @@ object Utils {
 
     fun length(etFloating: EditText): Int {
         return etFloating.text.toString().length
+    }
+
+    fun getDpFromPixel(context: Context, pixel: Int): Int {
+        val scale = context.resources.displayMetrics.density
+        return (pixel * scale + 0.5f).toInt()
     }
 }

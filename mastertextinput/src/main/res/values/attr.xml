@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="MasterTextInput">
         <attr name="custom_image" format="reference" />
+        <attr name="custom_background" format="reference" />
         <attr name="custom_text_color" format="color" />
         <attr name="custom_hint_color" format="color" />
         <attr name="custom_hint" format="string" localization="suggested" />
@@ -16,6 +17,8 @@
         <attr name="custom_editable" format="boolean" localization="suggested" />
         <attr name="custom_text" format="string" localization="suggested" />
         <attr name="custom_single_line" format="boolean" localization="suggested" />
+        <attr name="custom_border" format="boolean" localization="suggested" />
+        <attr name="custom_text_size" format="dimension" localization="suggested" />
     </declare-styleable>
 
     <integer name="floating_input_type_normal">1</integer>

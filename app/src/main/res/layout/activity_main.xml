@@ -16,7 +16,9 @@
         app:custom_hint="Enter name"
         app:custom_error="This input is not valid"
         app:custom_input_type="@integer/floating_input_type_normal"
-        app:custom_single_line="true" />
+        app:custom_single_line="true"
+        app:custom_text_size="25sp"
+        app:custom_background="@drawable/sample_box_design" />
 
     <com.bibaswann.mastertextinput.MasterTextInput
         android:id="@+id/input2"
@@ -33,6 +35,8 @@
         android:id="@+id/input3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:custom_image="@android:drawable/ic_input_add" />
+        app:custom_image="@android:drawable/ic_input_add"
+        app:custom_hint="Enter anything"
+        app:custom_border="true" />
 
 </LinearLayout>

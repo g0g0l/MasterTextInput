@@ -15,6 +15,7 @@ import android.text.method.DigitsKeyListener
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.View.OnFocusChangeListener
 import android.view.View.OnTouchListener
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -36,11 +37,13 @@ class MasterTextInput : LinearLayout {
     lateinit var llHolder: LinearLayout
 
     var floatingImage: Drawable? = null
+    var backgroundImage: Drawable? = null
+
     var mHint: String? = null
     var mText: String? = null
     var mHintColor: Int = -1
     var mTextcolor: Int = -1
-
+    var mValueTextSize: Int = -1
     var errorMessage: String? = ""
     var minMaxErrorMessage: String? = ""
     var minMaxLengthErrorMessage: String? = ""
@@ -53,6 +56,7 @@ class MasterTextInput : LinearLayout {
 
     private var mIsEditable = true
     private var mIsSingleLine = false
+    private var mBorder = false
 
     //Todo: When add more type add entry here
     var isValid: Boolean = false
@@ -316,6 +320,8 @@ class MasterTextInput : LinearLayout {
         try {
             //get the text and colors specified using the names in attrs.xml
             floatingImage = attr.getDrawable(R.styleable.MasterTextInput_custom_image)
+            backgroundImage = attr.getDrawable(R.styleable.MasterTextInput_custom_background)
+            mHintColor = attr.getColor(R.styleable.MasterTextInput_custom_hint_color, -1)
             mText = attr.getString(R.styleable.MasterTextInput_custom_text)
             mHint = attr.getString(R.styleable.MasterTextInput_custom_hint)
             mTextcolor = attr.getColor(R.styleable.MasterTextInput_custom_text_color, -1)
@@ -330,6 +336,8 @@ class MasterTextInput : LinearLayout {
             minLength = attr.getInt(R.styleable.MasterTextInput_custom_input_min_length, 0)
             maxLength = attr.getInt(R.styleable.MasterTextInput_custom_input_max_length, 0)
             mIsEditable = attr.getBoolean(R.styleable.MasterTextInput_custom_editable, true)
+            mBorder = attr.getBoolean(R.styleable.MasterTextInput_custom_border, false)
+            mValueTextSize = attr.getDimensionPixelSize(R.styleable.MasterTextInput_custom_text_size, -1)
 
         } finally {
             attr.recycle()
@@ -348,12 +356,35 @@ class MasterTextInput : LinearLayout {
         if (floatingImage != null) {
             etFloating.setCompoundDrawablesWithIntrinsicBounds(null, null, floatingImage, null)
         }
+        if (backgroundImage != null) {
+            val scale = resources.displayMetrics.density
+            val dpAsPixels = (8 * scale + 0.5f).toInt()
+            etFloating.setPadding(dpAsPixels, dpAsPixels, dpAsPixels, dpAsPixels)
+            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                etFloating.setBackgroundDrawable(backgroundImage)
+            } else {
+                etFloating.background = backgroundImage
+            }
+        }
         if (mTextcolor != -1) {
             etFloating.setTextColor(mTextcolor)
         }
-        if (mTextcolor != -1) {
+        if (mHintColor != -1) {
             etFloating.setHintTextColor(mHintColor)
         }
+        if (mValueTextSize != -1) {
+            etFloating.textSize = mValueTextSize.toFloat()
+        }
+        if (mBorder) {
+            var eightDp = Utils.getDpFromPixel(context, 8)
+            etFloating.setPadding(eightDp, eightDp, eightDp, eightDp)
+            if (mIsEditable)
+                etFloating.setBackgroundResource(R.drawable.edittext_box_active)
+            else
+                etFloating.setBackgroundResource(R.drawable.edittext_box_inactive)
+            hideHint()
+        }
+
         setEditable(mIsEditable)
         setSingleLine(mIsSingleLine)
         etFloating.addTextChangedListener(mTextWatcher)
@@ -361,6 +392,16 @@ class MasterTextInput : LinearLayout {
 
     fun addTextChangedListener(textWatcher: TextWatcher) {
         etFloating.addTextChangedListener(textWatcher)
+    }
+
+    fun hideHint() {
+        tilFloating.isHintAnimationEnabled = false
+        etFloating.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
+            if (!Validate.isEmptyString(etFloating.text.toString()) || hasFocus)
+                tilFloating.hint = ""
+            else
+                tilFloating.hint = mHint
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")

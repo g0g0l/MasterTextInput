@@ -16,8 +16,8 @@
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/margin8"
             android:paddingTop="@dimen/margin8"
-            android:textColor="@color/textColor"
-            android:textColorHint="@color/textHint" />
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray" />
 
     </android.support.design.widget.TextInputLayout>
 
