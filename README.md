@@ -45,6 +45,7 @@ Step 2. Add the dependency
     app:custom_background="@drawable/sample_box_design"
     app:custom_image="@drawable/sample_image"
     app:custom_border="true"
+    app:custom_all_caps="false"
     app:custom_text_size="14sp" />
 ```
 ### In Kotlin File
@@ -64,7 +65,7 @@ floating_input_type_alphanumeric
 floating_input_type_number
 floating_input_type_date
 floating_input_type_date_time
-floating_input_type_text_caps
+floating_input_type_text_name
 floating_input_type_phone
 ```
 ### Available properties/functions
