@@ -17,6 +17,7 @@
         <attr name="custom_editable" format="boolean" localization="suggested" />
         <attr name="custom_text" format="string" localization="suggested" />
         <attr name="custom_single_line" format="boolean" localization="suggested" />
+        <attr name="custom_all_caps" format="boolean" localization="suggested" />
         <attr name="custom_border" format="boolean" localization="suggested" />
         <attr name="custom_text_size" format="dimension" localization="suggested" />
     </declare-styleable>
@@ -29,7 +30,7 @@
     <integer name="floating_input_type_number">6</integer>
     <integer name="floating_input_type_date">7</integer>
     <integer name="floating_input_type_date_time">8</integer>
-    <integer name="floating_input_type_text_caps">9</integer>
+    <integer name="floating_input_type_text_name">9</integer>
     <integer name="floating_input_type_phone">10</integer>
 
 </resources>

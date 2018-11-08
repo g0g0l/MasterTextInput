@@ -54,9 +54,10 @@ class MasterTextInput : LinearLayout {
     var minLength: Int = 0
     var maxLength: Int = 0
 
-    private var mIsEditable = true
-    private var mIsSingleLine = false
-    private var mBorder = false
+    private var isEditable = true
+    private var isSingleLine = false
+    private var isAllCaps = false
+    private var hasBorder = false
 
     //Todo: When add more type add entry here
     var isValid: Boolean = false
@@ -86,7 +87,7 @@ class MasterTextInput : LinearLayout {
             if (inputType == mContext!!.resources.getInteger(R.integer.floating_input_type_password)) {
                 returnValue = !Validate.isEmptyString(etFloating.text.toString())
             }
-            if (inputType == mContext!!.resources.getInteger(R.integer.floating_input_type_text_caps)) {
+            if (inputType == mContext!!.resources.getInteger(R.integer.floating_input_type_text_name)) {
                 returnValue = !Validate.isEmptyString(etFloating.text.toString())
             }
             if (inputType == mContext!!.resources.getInteger(R.integer.floating_input_type_phone)) {
@@ -191,7 +192,6 @@ class MasterTextInput : LinearLayout {
     //Todo: When add more type add entry here
     private fun initListeners() {
         etFloating.addTextChangedListener(mTextWatcher)
-
         when (inputType) {
             mContext!!.resources.getInteger(R.integer.floating_input_type_email) -> setupEmail()
             mContext!!.resources.getInteger(R.integer.floating_input_type_normal) -> setupNormal()
@@ -201,7 +201,7 @@ class MasterTextInput : LinearLayout {
             mContext!!.resources.getInteger(R.integer.floating_input_type_date) -> setupDateTime(true)
             mContext!!.resources.getInteger(R.integer.floating_input_type_date_time) -> setupDateTime(false)
             mContext!!.resources.getInteger(R.integer.floating_input_type_password) -> setupPassword()
-            mContext!!.resources.getInteger(R.integer.floating_input_type_text_caps) -> setupCapsText()
+            mContext!!.resources.getInteger(R.integer.floating_input_type_text_name) -> setupName()
             mContext!!.resources.getInteger(R.integer.floating_input_type_phone) -> setupPhone()
         }
 
@@ -214,8 +214,8 @@ class MasterTextInput : LinearLayout {
     }
 
     private fun setupDocumentNumber() {
-        val editText = etFloating
-        editText.filters = arrayOf(InputFilter { src, start, end, dst, dstart, dend ->
+        //Todo there is a bug I think, sometimes the everything is deleted on special characters press, test later
+        etFloating.filters = arrayOf(InputFilter { src, start, end, dst, dstart, dend ->
             if (src == "") { // for backspace
                 return@InputFilter src
             }
@@ -245,12 +245,22 @@ class MasterTextInput : LinearLayout {
         etFloating.inputType = InputType.TYPE_CLASS_PHONE
     }
 
-    private fun setupCapsText() {
-        etFloating.filters = arrayOf(InputFilter.AllCaps())
+    private fun setupName() {
+        //Todo there is a bug I think, sometimes the everything is deleted on special characters press, test later
+        etFloating.filters = arrayOf(InputFilter { src, start, end, dst, dstart, dend ->
+            if (src == "") { // for backspace
+                return@InputFilter src
+            }
+            if (src.toString().matches("[a-zA-Z ]+".toRegex())) {
+                src
+            } else ""
+        })
     }
 
     private fun setupPassword() {
-        etFloating.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+        etFloating.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        etFloating.setSelection(etFloating.text.length)
+        tilFloating.isPasswordVisibilityToggleEnabled = true
     }
 
     private fun setupAge() {
@@ -263,11 +273,12 @@ class MasterTextInput : LinearLayout {
         etFloating.isEnabled = false
         etFloating.inputType = InputType.TYPE_NULL
         etFloating.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.baseline_date_range_24, 0)
-        //Handling it wil focus change creates problem when multiple dateviews are one after another
-//        etFloating.setOnFocusChangeListener { _, hasFocus ->
-//            if (hasFocus)
-//                setdateTimeToEditText(etFloating, dateOnly)
-//        }
+
+        //Currently not allowing manual input, comment below lines and change input type above to allow
+        etFloating.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus)
+                Utils.hideKeyboard(mContext!!, etFloating)
+        }
 
         etFloating.setOnTouchListener(OnTouchListener { _, event ->
             val DRAWABLE_LEFT = 0
@@ -330,13 +341,14 @@ class MasterTextInput : LinearLayout {
             minMaxErrorMessage = attr.getString(R.styleable.MasterTextInput_custom_min_max_error)
             minMaxLengthErrorMessage = attr.getString(R.styleable.MasterTextInput_custom_min_max_length_error)
             inputType = attr.getInt(R.styleable.MasterTextInput_custom_input_type, 0)
-            mIsSingleLine = attr.getBoolean(R.styleable.MasterTextInput_custom_single_line, true)
+            isSingleLine = attr.getBoolean(R.styleable.MasterTextInput_custom_single_line, true)
+            isAllCaps = attr.getBoolean(R.styleable.MasterTextInput_custom_all_caps, false)
             min = attr.getInt(R.styleable.MasterTextInput_custom_input_min, 0)
             max = attr.getInt(R.styleable.MasterTextInput_custom_input_max, 0)
             minLength = attr.getInt(R.styleable.MasterTextInput_custom_input_min_length, 0)
             maxLength = attr.getInt(R.styleable.MasterTextInput_custom_input_max_length, 0)
-            mIsEditable = attr.getBoolean(R.styleable.MasterTextInput_custom_editable, true)
-            mBorder = attr.getBoolean(R.styleable.MasterTextInput_custom_border, false)
+            isEditable = attr.getBoolean(R.styleable.MasterTextInput_custom_editable, true)
+            hasBorder = attr.getBoolean(R.styleable.MasterTextInput_custom_border, false)
             mValueTextSize = attr.getDimensionPixelSize(R.styleable.MasterTextInput_custom_text_size, -1)
 
         } finally {
@@ -375,19 +387,27 @@ class MasterTextInput : LinearLayout {
         if (mValueTextSize != -1) {
             etFloating.textSize = mValueTextSize.toFloat()
         }
-        if (mBorder) {
+        if (hasBorder) {
             var eightDp = Utils.getDpFromPixel(context, 8)
             etFloating.setPadding(eightDp, eightDp, eightDp, eightDp)
-            if (mIsEditable)
+            if (isEditable)
                 etFloating.setBackgroundResource(R.drawable.edittext_box_active)
             else
                 etFloating.setBackgroundResource(R.drawable.edittext_box_inactive)
             hideHint()
         }
+        if (isAllCaps) {
+            etFloating.filters = arrayOf(InputFilter.AllCaps())
+        }
 
-        setEditable(mIsEditable)
-        setSingleLine(mIsSingleLine)
+        setEditable(isEditable)
         etFloating.addTextChangedListener(mTextWatcher)
+        //Single line is not applicable to all input types
+        if (inputType == mContext!!.resources.getInteger(R.integer.floating_input_type_normal)
+                || inputType == mContext!!.resources.getInteger(R.integer.floating_input_type_alphanumeric)
+                || inputType == mContext!!.resources.getInteger(R.integer.floating_input_type_number)
+                || inputType == mContext!!.resources.getInteger(R.integer.floating_input_type_text_name))
+            setSingleLine(isSingleLine)
     }
 
     fun addTextChangedListener(textWatcher: TextWatcher) {
@@ -467,10 +487,10 @@ class MasterTextInput : LinearLayout {
     }
 
     fun setEditable(editable: Boolean) {
-        mIsEditable = editable
-        etFloating.isEnabled = mIsEditable
-        etFloating.isFocusable = mIsEditable
-        etFloating.isFocusableInTouchMode = mIsEditable
+        isEditable = editable
+        etFloating.isEnabled = isEditable
+        etFloating.isFocusable = isEditable
+        etFloating.isFocusableInTouchMode = isEditable
     }
 
     fun setSingleLine(singleLine: Boolean) {
@@ -503,6 +523,6 @@ class MasterTextInput : LinearLayout {
     companion object {
         val EMAIl_LENGTH = 256
         val AGE_LENGTH = 3
-        val NAME_INPUT_CHARS = "qwertyuiopasdfghjklzxcvbnm. QWERTYUIOPASDFGHJKLZXCVBNM"
+        val NAME_INPUT_CHARS = "qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM"
     }
 }
