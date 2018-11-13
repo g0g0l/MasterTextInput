@@ -82,6 +82,7 @@ setTextWatcher(TextWatcher)
 setImageClickListener(View.OnClickListener): Only if you set custom_image via XML
 setSingleLine(Boolean)
 setEditable(Boolean)
+hideHint(): Hides hint on focus
 ```
 
 ### For complete list of properties, functions and input types, please check the source code
