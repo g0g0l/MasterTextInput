@@ -12,8 +12,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //Sample: How to add image and set image click
+        //hideHint() will hide it on focus
+        input1.hideHint()
 
+        //Sample: How to add image and set image click
         input3.setImageClickListener(View.OnClickListener { Toast.makeText(this@MainActivity, "You clicked me", Toast.LENGTH_LONG).show() })
+
+        //Sample: How to show error
+        btnSubmit.setOnClickListener {
+            input1.showError()
+            input2.showError()
+            input3.showError()
+            input4.showError()
+        }
     }
 }

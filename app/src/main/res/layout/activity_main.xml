@@ -4,50 +4,59 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
     android:orientation="vertical"
-    android:padding="@dimen/margin16">
+    android:padding="@dimen/margin16"
+    tools:context=".MainActivity">
 
     <com.bibaswann.mastertextinput.MasterTextInput
         android:id="@+id/input1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/margin8"
-        app:custom_hint="Enter name"
+        app:custom_background="@drawable/sample_box_design"
         app:custom_error="This input is not valid"
+        app:custom_hint="Enter name"
         app:custom_input_type="@integer/floating_input_type_text_name"
         app:custom_single_line="true"
-        app:custom_text_size="25sp"
-        app:custom_background="@drawable/sample_box_design" />
+        app:custom_text_size="8sp" />
 
     <com.bibaswann.mastertextinput.MasterTextInput
         android:id="@+id/input2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/margin8"
-        app:custom_hint="Enter date"
         app:custom_error="This input is not valid"
-        app:custom_text_color="@color/colorAccent"
+        app:custom_hint="Enter date"
         app:custom_hint_color="@color/colorPrimary"
-        app:custom_input_type="@integer/floating_input_type_date" />
+        app:custom_input_type="@integer/floating_input_type_date"
+        app:custom_text_color="@color/colorAccent" />
 
     <com.bibaswann.mastertextinput.MasterTextInput
         android:id="@+id/input3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:custom_image="@android:drawable/ic_input_add"
-        app:custom_hint="Enter anything"
+        app:custom_error="This input is not valid"
         app:custom_all_caps="true"
-        app:custom_border="true" />
+        app:custom_border="true"
+        app:custom_hint="Enter anything"
+        app:custom_image="@android:drawable/ic_input_add" />
 
     <com.bibaswann.mastertextinput.MasterTextInput
         android:id="@+id/input4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/margin8"
-        app:custom_hint="Enter password"
         app:custom_error="This input is not valid"
+        app:custom_hint="Enter password"
         app:custom_input_type="@integer/floating_input_type_password"
         app:custom_single_line="true" />
+
+    <Button
+        android:id="@+id/btnSubmit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:text="Submit"
+        android:textColor="@android:color/white" />
 
 </LinearLayout>

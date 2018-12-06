@@ -2,6 +2,9 @@
 <resources>
     <color name="black">#000</color>
     <color name="gray">#424242</color>
-    <color name="gray_light">#c2c2c2</color>
     <color name="transparent">#00000000</color>
+
+    <color name="et_border">#cccccc</color>
+    <color name="et_inside">#fafbfb</color>
+    <color name="et_inside_inactive">#e1e1e1</color>
 </resources>

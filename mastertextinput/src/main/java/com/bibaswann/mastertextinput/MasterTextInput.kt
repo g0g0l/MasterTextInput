@@ -29,6 +29,7 @@ DO NOT MODIFY WITHOUT PROPER DISCUSSION
 
 
 class MasterTextInput : LinearLayout {
+    //region VARIABLE
     private var mContext: Context? = null
     private var inputType = 0
 
@@ -58,6 +59,11 @@ class MasterTextInput : LinearLayout {
     private var isSingleLine = false
     private var isAllCaps = false
     private var hasBorder = false
+    private var hasHint = true
+
+    //endregion
+
+    //region VALIDATION
 
     //Todo: When add more type add entry here
     var isValid: Boolean = false
@@ -133,31 +139,33 @@ class MasterTextInput : LinearLayout {
             return returnValue
         }
 
-    private val mTextWatcher = object : TextWatcher {
-        override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-        }
-
-        override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-            clearError()
-        }
-
-        override fun afterTextChanged(editable: Editable) {
+    private fun getMinMaxValidation(value: Int): Boolean {
+        return if (min != 0 && max != 0) {
+            value in min..max
+        } else if (min != 0) {
+            value >= min
+        } else if (max != 0) {
+            value <= max
+        } else {
+            value > 0
         }
     }
 
-    var text: String
-        get() = etFloating.text.toString()
-        set(text) {
-            mText = if (Validate.isEmptyString(text)) "" else text
-            etFloating.setText(mText)
+    private fun getMinMaxLengthValidation(value: Int): Boolean {
+        return if (minLength != 0 && maxLength != 0) {
+            value in minLength..maxLength
+        } else if (minLength != 0) {
+            value >= minLength
+        } else if (maxLength != 0) {
+            value <= maxLength
+        } else {
+            value > 0
         }
+    }
 
-    /**
-     * returns if the edit text is focused or not
-     * @return
-     */
-    val isEditFocused: Boolean
-        get() = etFloating.isFocused
+    //endregion
+
+    //region CONSTRUCTOR & INITIALIZER
 
     constructor(context: Context) : super(context) {
         mContext = context
@@ -188,6 +196,10 @@ class MasterTextInput : LinearLayout {
         initListeners()
 
     }
+
+    //endregion
+
+    //region INPUTTYPE
 
     //Todo: When add more type add entry here
     private fun initListeners() {
@@ -246,6 +258,7 @@ class MasterTextInput : LinearLayout {
     }
 
     private fun setupName() {
+        etFloating.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_WORDS
         //Todo there is a bug I think, sometimes the everything is deleted on special characters press, test later
         etFloating.filters = arrayOf(InputFilter { src, start, end, dst, dstart, dend ->
             if (src == "") { // for backspace
@@ -296,29 +309,26 @@ class MasterTextInput : LinearLayout {
         })
     }
 
-    private fun getMinMaxValidation(value: Int): Boolean {
-        return if (min != 0 && max != 0) {
-            value in min..max
-        } else if (min != 0) {
-            value >= min
-        } else if (max != 0) {
-            value <= max
-        } else {
-            value > 0
-        }
+    private fun setdateTimeToEditText(editText: EditText?, dateOnly: Boolean) {
+        val calendar = Calendar.getInstance(TimeZone.getDefault())
+        val mHour = calendar.get(Calendar.HOUR_OF_DAY)
+        val mMinute = calendar.get(Calendar.MINUTE)
+
+        val dialog = DatePickerDialog(context, DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+            editText!!.setText(dayOfMonth.toString() + "/" + month.toString() + "/" + year.toString())
+            if (!dateOnly) {
+                val timePickerDialog = TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+                    editText!!.setText(editText!!.text.toString() + " - " + String.format("%02d:%02d", hourOfDay, minute))
+                }, mHour, mMinute, true)
+                timePickerDialog.show()
+            }
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+        dialog.show()
     }
 
-    private fun getMinMaxLengthValidation(value: Int): Boolean {
-        return if (minLength != 0 && maxLength != 0) {
-            value in minLength..maxLength
-        } else if (minLength != 0) {
-            value >= minLength
-        } else if (maxLength != 0) {
-            value <= maxLength
-        } else {
-            value > 0
-        }
-    }
+    //endregion
+
+    //region ATTRIBUTE
 
     //Todo if add more attribute, change here
     private fun initAttributes(attrs: AttributeSet?) {
@@ -396,11 +406,10 @@ class MasterTextInput : LinearLayout {
                 etFloating.setBackgroundResource(R.drawable.edittext_box_inactive)
             hideHint()
         }
-        if (isAllCaps) {
-            etFloating.filters = arrayOf(InputFilter.AllCaps())
-        }
 
+        setAllCaps(isAllCaps)
         setEditable(isEditable)
+
         etFloating.addTextChangedListener(mTextWatcher)
         //Single line is not applicable to all input types
         if (inputType == mContext!!.resources.getInteger(R.integer.floating_input_type_normal)
@@ -412,16 +421,6 @@ class MasterTextInput : LinearLayout {
 
     fun addTextChangedListener(textWatcher: TextWatcher) {
         etFloating.addTextChangedListener(textWatcher)
-    }
-
-    fun hideHint() {
-        tilFloating.isHintAnimationEnabled = false
-        etFloating.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
-            if (!Validate.isEmptyString(etFloating.text.toString()) || hasFocus)
-                tilFloating.hint = ""
-            else
-                tilFloating.hint = mHint
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -444,9 +443,38 @@ class MasterTextInput : LinearLayout {
         }
     }
 
+    fun setEditable(editable: Boolean) {
+        isEditable = editable
+        etFloating.isEnabled = isEditable
+        etFloating.isFocusable = isEditable
+        etFloating.isFocusableInTouchMode = isEditable
+    }
+
+    fun setSingleLine(singleLine: Boolean) {
+        etFloating.setSingleLine(singleLine)
+    }
+
+    fun setAllCaps(b: Boolean) {
+        if (b)
+            etFloating.filters = arrayOf(InputFilter.AllCaps())
+    }
+
+    //endregion
+
+    //region ERROR
+
     fun clearError() {
         tilFloating.error = null
         tilFloating.isErrorEnabled = false
+    }
+
+    fun showError() {
+        tilFloating.error = errorMessage
+        tilFloating.isErrorEnabled = true
+        if (!hasHint) {
+            tilFloating.isHintAnimationEnabled = false
+            tilFloating.hint = ""
+        }
     }
 
     private fun setErrorMessageToTil(error: String) {
@@ -455,17 +483,7 @@ class MasterTextInput : LinearLayout {
             clearError()
             return
         }
-        tilFloating.error = error
-        tilFloating.isErrorEnabled = true
-    }
-
-    fun showError(b: Boolean) {
-        if (b) {
-            tilFloating.error = errorMessage
-            tilFloating.isErrorEnabled = true
-        } else {
-            clearError()
-        }
+        showError()
     }
 
     var error: Any
@@ -479,43 +497,60 @@ class MasterTextInput : LinearLayout {
             }
         }
 
-    //Todo will think about converting the following to properties
+    //endregion
 
-    fun setHint(hint: String) {
-        mHint = if (Validate.isEmptyString(hint)) "" else hint
-        tilFloating.hint = mHint
+    //region HINT
+    fun hideHint() {
+        tilFloating.isHintAnimationEnabled = false
+        //Alternatively we can hide hint on text change
+        etFloating.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
+            if (!Validate.isEmptyString(etFloating.text.toString()) || hasFocus)
+                tilFloating.hint = ""
+            else
+                tilFloating.hint = mHint
+        }
+        hasHint = false
     }
 
-    fun setEditable(editable: Boolean) {
-        isEditable = editable
-        etFloating.isEnabled = isEditable
-        etFloating.isFocusable = isEditable
-        etFloating.isFocusableInTouchMode = isEditable
-    }
+    var hint: String?
+        get() {
+            return mHint
+        }
+        set(hint) {
+            mHint = if (Validate.isEmptyString(hint)) "" else hint
+            tilFloating.hint = mHint
+        }
 
-    fun setSingleLine(singleLine: Boolean) {
-        etFloating.setSingleLine(singleLine)
-    }
+    //endregion
+
+    //region LISTENER & MISC
+
+    var text: String
+        get() = etFloating.text.toString()
+        set(text) {
+            mText = if (Validate.isEmptyString(text)) "" else text
+            etFloating.setText(mText)
+        }
 
     fun clearBackground() {
         etFloating.setBackgroundColor(ContextCompat.getColor(context, R.color.transparent))
     }
 
-    private fun setdateTimeToEditText(editText: EditText?, dateOnly: Boolean) {
-        val calendar = Calendar.getInstance(TimeZone.getDefault())
-        val mHour = calendar.get(Calendar.HOUR_OF_DAY)
-        val mMinute = calendar.get(Calendar.MINUTE)
 
-        val dialog = DatePickerDialog(context, DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-            editText!!.setText(dayOfMonth.toString() + "/" + month.toString() + "/" + year.toString())
-            if (!dateOnly) {
-                val timePickerDialog = TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-                    editText!!.setText(editText!!.text.toString() + " - " + String.format("%02d:%02d", hourOfDay, minute))
-                }, mHour, mMinute, true)
-                timePickerDialog.show()
-            }
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-        dialog.show()
+    val isEditFocused: Boolean
+        get() = etFloating.isFocused
+
+    private val mTextWatcher = object : TextWatcher {
+        override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+        }
+
+        override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+            //Remove the error in case of text change
+            clearError()
+        }
+
+        override fun afterTextChanged(editable: Editable) {
+        }
     }
 
     //Todo add get integer part and string part function
@@ -525,4 +560,6 @@ class MasterTextInput : LinearLayout {
         val AGE_LENGTH = 3
         val NAME_INPUT_CHARS = "qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM"
     }
+
+    //endregion
 }
